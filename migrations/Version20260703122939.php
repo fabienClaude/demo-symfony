@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260701110043 extends AbstractMigration
+final class Version20260703122939 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,6 +25,7 @@ final class Version20260701110043 extends AbstractMigration
               id INT AUTO_INCREMENT NOT NULL,
               name VARCHAR(255) NOT NULL,
               owner VARCHAR(255) NOT NULL,
+              address VARCHAR(255) NOT NULL,
               zip_code VARCHAR(5) NOT NULL,
               city VARCHAR(255) NOT NULL,
               shop_type VARCHAR(255) NOT NULL,

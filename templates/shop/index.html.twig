@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ShopController!{% endblock %}
+
+{% block body %}
+    <div class="max-w-6xl mx-auto p-6" {{ react_component('ShopManager', { shops: shops, types: types, addurl :  path('app_shop_add') }) }}></div>
+{% endblock %}

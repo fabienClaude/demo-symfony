@@ -1,0 +1,37 @@
+{
+    "devDependencies": {
+        "@babel/core": "^8.0.0",
+        "@babel/preset-env": "^8.0.0",
+        "@babel/preset-react": "^8.0.1",
+        "@hotwired/turbo": "^7.1.0 || ^8.0",
+        "@symfony/stimulus-bridge": "^4.0.1",
+        "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
+        "@symfony/webpack-encore": "^7.0.0",
+        "@tailwindcss/postcss": "^4.3.2",
+        "autoprefixer": "^10.5.2",
+        "babel-plugin-polyfill-corejs3": "^1.0.0",
+        "core-js": "^3.49.0",
+        "postcss": "^8.5.16",
+        "postcss-loader": "^8.2.1",
+        "regenerator-runtime": "^0.13.9",
+        "tailwindcss": "^4.3.2",
+        "webpack": "^5.82",
+        "webpack-cli": "^7.0.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    },
+    "dependencies": {
+        "@babel/standalone": "^8.0.3",
+        "@hotwired/stimulus": "^3.2.2",
+        "@symfony/ux-react": "file:vendor/symfony/ux-react/assets",
+        "axios": "^1.18.1",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7"
+    }
+}

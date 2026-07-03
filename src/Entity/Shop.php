@@ -14,19 +14,22 @@ class Shop
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $owner = null;
 
-    #[ORM\Column(length: 5)]
+    #[ORM\Column(length: 255, nullable: false)]
+    private ?string $address = null;
+
+    #[ORM\Column(length: 5, nullable: false)]
     private ?string $zipCode = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $city = null;
 
-    #[ORM\Column(type: 'string', enumType: ShopType::class)]
+    #[ORM\Column(type: 'string', enumType: ShopType::class, nullable: false)]
     private ShopType $shopType;
 
     public function getId(): ?int
@@ -42,6 +45,18 @@ class Shop
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): static
+    {
+        $this->address = $address;
 
         return $this;
     }

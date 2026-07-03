@@ -11,6 +11,11 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libpq-dev \
     openssl \
+    curl \
+    gnupg2 \
+    ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # --- Extensions PHP nécessaires à Symfony ---
