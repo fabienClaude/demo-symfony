@@ -3,5 +3,5 @@
 {% block title %}Hello ShopController!{% endblock %}
 
 {% block body %}
-    <div class="max-w-6xl mx-auto p-6" {{ react_component('ShopManager', { shops: shops, types: types, addurl :  path('app_shop_add') }) }}></div>
+    <div class="max-w-6xl mx-auto p-6" {{ react_component('ShopManager', { shops: shops, types: types, addurl :  path('app_shop_add'),csrftoken: csrf_token('shop_form') }) }}></div>
 {% endblock %}

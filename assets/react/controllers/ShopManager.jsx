@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const REQUIRED_FIELDS = ['name', 'owner', 'address', 'city', 'zipcode', 'shoptype'];
+
+function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
+
 function ShopCard({ shop }) {
     return (
         <div className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -10,7 +15,7 @@ function ShopCard({ shop }) {
                     <h3 className="truncate text-base font-semibold text-slate-900">
                         {shop.name}
                     </h3>
-                    <p className="mt-0.5 text-sm text-slate-500">{shop.city}</p>
+                    <p className="mt-0.5 text-sm text-slate-500">{shop.owner}</p>
                 </div>
             </div>
 
@@ -22,15 +27,43 @@ function ShopCard({ shop }) {
                     </svg>
                     <span className="truncate">{shop.address}</span>
                 </div>
+                <div className="flex items-center gap-2 text-slate-600">
+                    <span className="truncate">{shop.zipcode} {shop.city}</span>
+                </div>
             </dl>
         </div>
     );
 }
 
-function AddShopModal({ open, onClose, onSave, types, addurl }) {
-	const shopState = { name: '', owner: '', address: '', city: '', zipcode: '', shoptype: '' };
+function FormField ({label, value, onChange, placeholder, errorname,inputClass}) {
+    return (
+        <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">                
+                {label} <span className="text-red-500">*</span>
+            </label>
+            <input
+                type="text"
+                required
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                aria-invalid={Boolean(errorname)}
+                className={inputClass}
+            />
+            {errorname && (
+                <p className="mt-1 text-xs text-red-600">{errorname}</p>
+            )}
+        </div>
+    );
+}
+
+function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
+    const shopState = { name: '', owner: '', address: '', city: '', zipcode: '', shoptype: '' };
     const [form, setForm] = useState(shopState);
     const [fieldErrors, setFieldErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [formError, setFormError] = useState('');
+    const [formOk, setFormOk] = useState('');
 
     if (!open) return null;
 
@@ -63,17 +96,20 @@ function AddShopModal({ open, onClose, onSave, types, addurl }) {
             return;
         }
         setLoading(true);
-    	setApiError('');
+        setFormError('');
+        setFormOk('');
         try {
-	        const response = await axios.post(addurl, form);
-	        onSave(response.data);
-	        setForm(shopState);
-	        setFieldErrors({});
-	        setLoading(false);
-	    } catch (error) {
-	        setApiError(error.response?.data?.message || 'Erreur lors de l\'ajout du magasin.');
-	        setLoading(false);
-	    }
+            const response = await axios.post(addurl, { ...form, _token: csrfToken });
+            onSave(response?.data?.shop || []);
+            setForm(shopState);
+            setFormOk(response?.data?.message || 'Magasin ajouté');
+            setFieldErrors({});
+            setLoading(false);
+            await timeout(1000);
+        } catch (error) {
+            setFormError(error.response?.data?.message || 'Erreur lors de l\'ajout du magasin.');
+            setLoading(false);
+        }
     };
 
     const handleClose = () => {
@@ -121,107 +157,100 @@ function AddShopModal({ open, onClose, onSave, types, addurl }) {
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-700">
-                            Nom du magasin <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            value={form.name}
-                            onChange={handleChange('name')}
-                            placeholder="Ex : Épicerie du Marché"
-                            aria-invalid={Boolean(fieldErrors.name)}
-                            className={inputClass('name')}
-                        />
-                        {fieldErrors.name && (
-                            <p className="mt-1 text-xs text-red-600">{fieldErrors.name}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-700">
-                            Propriétaire du magasin <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            value={form.owner}
-                            onChange={handleChange('owner')}
-                            placeholder="Ex : Michel Durand"
-                            aria-invalid={Boolean(fieldErrors.owner)}
-                            className={inputClass('owner')}
-                        />
-                        {fieldErrors.owner && (
-                            <p className="mt-1 text-xs text-red-600">{fieldErrors.owner}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-700">
-                            Adresse <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            value={form.address}
-                            onChange={handleChange('address')}
-                            placeholder="12 rue Sainte-Catherine"
-                            aria-invalid={Boolean(fieldErrors.address)}
-                            className={inputClass('address')}
-                        />
-                        {fieldErrors.address && (
-                            <p className="mt-1 text-xs text-red-600">{fieldErrors.address}</p>
-                        )}
-                    </div>
+                    <FormField
+                        label='Nom du magasin'
+                        value={form.name}
+                        onChange={handleChange('name')}
+                        placeholder="Ex : Épicerie du Marché"
+                        errorname={fieldErrors.name}
+                        inputClass={inputClass('name')}
+                    />
+                    <FormField
+                        label='Propriétaire du magasin'
+                        value={form.owner}
+                        onChange={handleChange('owner')}
+                        placeholder="Ex : Michel Durand"
+                        errorname={fieldErrors.owner}
+                        inputClass={inputClass('owner')}
+                    />
+                    <FormField
+                        label='Adresse'
+                        value={form.address}
+                        onChange={handleChange('address')}
+                        placeholder="12 rue Sainte-Catherine"
+                        errorname={fieldErrors.address}
+                        inputClass={inputClass('address')}
+                    />
                     <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="mb-1 block text-sm font-medium text-slate-700">
-                                Code postal <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={form.zipcode}
-                                onChange={handleChange('zipcode')}
-                                placeholder="31200"
-                                aria-invalid={Boolean(fieldErrors.zipcode)}
-                                className={inputClass('zipcode')}
-                            />
-                            {fieldErrors.zipcode && (
-                                <p className="mt-1 text-xs text-red-600">{fieldErrors.zipcode}</p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="mb-1 block text-sm font-medium text-slate-700">
-                                Ville <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={form.city}
-                                onChange={handleChange('city')}
-                                placeholder="Bordeaux"
-                                aria-invalid={Boolean(fieldErrors.city)}
-                                className={inputClass('city')}
-                            />
-                            {fieldErrors.city && (
-                                <p className="mt-1 text-xs text-red-600">{fieldErrors.city}</p>
-                            )}
-                        </div>
+                        <FormField
+                            label='Code postal'
+                            value={form.zipcode}
+                            onChange={handleChange('zipcode')}
+                            placeholder="31200"
+                            errorname={fieldErrors.zipcode}
+                            inputClass={inputClass('zipcode')}
+                        />
+                        <FormField
+                            label='Ville'
+                            value={form.city}
+                            onChange={handleChange('city')}
+                            placeholder="Bordeaux"
+                            errorname={fieldErrors.city}
+                            inputClass={inputClass('city')}
+                        />
                     </div>
 
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-slate-700">
+                            Type de magasin <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                            required
+                            value={form.shoptype}
+                            onChange={handleChange('shoptype')}
+                            aria-invalid={Boolean(fieldErrors.shoptype)}
+                            className={inputClass('shoptype')}
+                        >
+                            <option value="" disabled>
+                                Sélectionnez un type
+                            </option>
+                            {types.map((type) => (
+                                <option key={type.id ?? type} value={type.id ?? type}>
+                                    {type.value ?? type}
+                                </option>
+                            ))}
+                        </select>
+                        {fieldErrors.shoptype && (
+                            <p className="mt-1 text-xs text-red-600">{fieldErrors.shoptype}</p>
+                        )}
+                    </div>
+
+                    {formError && (
+                        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                            {formError}
+                        </p>
+                    )}
+
+                    {formOk && (
+                        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-600">
+                            {formOk}
+                        </p>
+                    )}
                     <div className="mt-6 flex justify-end gap-2">
                         <button
                             type="button"
                             onClick={handleClose}
-                            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+                            disabled={loading}
+                            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-50"
                         >
                             Annuler
                         </button>
                         <button
                             type="submit"
-                            className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-amber-600"
+                            disabled={loading}
+                            className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            Ajouter le magasin
+                            {loading ? 'Ajout en cours...' : 'Ajouter le magasin'}
                         </button>
                     </div>
                 </form>
@@ -235,8 +264,8 @@ export default function ShopManager(props) {
     const [shops, setShops] = useState(props.shops || []);
     const types = props.types || [];
     const addurl = props.addurl || "";
-    const [modalOpen, setModalOpen] = useState(false);
-
+    const [modalOpen, setModalOpen] = useState(false);    
+    const csrfToken = props.csrftoken || "";
     const handleAddShop = (shop) => { 
         setShops((prev) => [...prev, shop]);
         setModalOpen(false);
@@ -281,6 +310,7 @@ export default function ShopManager(props) {
                 onSave={handleAddShop}
                 types={types}
                 addurl={addurl}
+                csrfToken={csrfToken}
             />
         </div>
     );

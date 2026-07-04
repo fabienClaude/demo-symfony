@@ -111,4 +111,17 @@ class Shop
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return  [
+            'id' => $this->getId(),
+            'name' => $this->getName(), 
+            'owner' => $this->getOwner(), 
+            'address' => $this->getAddress(), 
+            'city' => $this->getCity(), 
+            'zipcode' => $this->getZipCode(), 
+            'shoptype' => $this->getShopType(),
+        ];
+    }
 }

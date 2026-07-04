@@ -16,6 +16,16 @@ class ShopRepository extends ServiceEntityRepository
         parent::__construct($registry, Shop::class);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+    }
+
+
     //    /**
     //     * @return Shop[] Returns an array of Shop objects
     //     */
