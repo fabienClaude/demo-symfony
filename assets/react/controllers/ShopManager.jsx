@@ -35,21 +35,44 @@ function ShopCard({ shop }) {
     );
 }
 
-function FormField ({label, value, onChange, placeholder, errorname,inputClass}) {
+function FormField ({label, value, onChange, placeholder, errorname,inputClass,inputType, data}) {
+    const fieldData = data || [];
+    const fieldPlaceholder = placeholder || "";
     return (
         <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">                
                 {label} <span className="text-red-500">*</span>
             </label>
-            <input
-                type="text"
-                required
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-                aria-invalid={Boolean(errorname)}
-                className={inputClass}
-            />
+            {inputType == "input" && (
+                <input
+                    type="text"
+                    required
+                    value={value}
+                    onChange={onChange}
+                    placeholder={fieldPlaceholder}
+                    aria-invalid={Boolean(errorname)}
+                    className={inputClass}
+                />
+            )}
+            {inputType == "select" && (
+                 <select
+                    required
+                    value={value}
+                    onChange={onChange}
+                    aria-invalid={Boolean(errorname)}
+                    className={inputClass}
+                >
+                    <option value="" disabled>
+                        Sélectionnez un type
+                    </option>
+                    {fieldData.map((value) => (
+                        <option key={value.id ?? value} value={value.id ?? value}>
+                            {value.value ?? value}
+                        </option>
+                    ))}
+                </select>
+            )}
+            
             {errorname && (
                 <p className="mt-1 text-xs text-red-600">{errorname}</p>
             )}
@@ -164,6 +187,7 @@ function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
                         placeholder="Ex : Épicerie du Marché"
                         errorname={fieldErrors.name}
                         inputClass={inputClass('name')}
+                        inputType="input"
                     />
                     <FormField
                         label='Propriétaire du magasin'
@@ -172,6 +196,7 @@ function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
                         placeholder="Ex : Michel Durand"
                         errorname={fieldErrors.owner}
                         inputClass={inputClass('owner')}
+                        inputType="input"
                     />
                     <FormField
                         label='Adresse'
@@ -180,6 +205,7 @@ function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
                         placeholder="12 rue Sainte-Catherine"
                         errorname={fieldErrors.address}
                         inputClass={inputClass('address')}
+                        inputType="input"
                     />
                     <div className="grid grid-cols-2 gap-3">
                         <FormField
@@ -189,6 +215,7 @@ function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
                             placeholder="31200"
                             errorname={fieldErrors.zipcode}
                             inputClass={inputClass('zipcode')}
+                            inputType="input"
                         />
                         <FormField
                             label='Ville'
@@ -197,33 +224,18 @@ function AddShopModal({ open, onClose, onSave, types, addurl, csrfToken }) {
                             placeholder="Bordeaux"
                             errorname={fieldErrors.city}
                             inputClass={inputClass('city')}
+                            inputType="input"
                         />
                     </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-700">
-                            Type de magasin <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                            required
-                            value={form.shoptype}
-                            onChange={handleChange('shoptype')}
-                            aria-invalid={Boolean(fieldErrors.shoptype)}
-                            className={inputClass('shoptype')}
-                        >
-                            <option value="" disabled>
-                                Sélectionnez un type
-                            </option>
-                            {types.map((type) => (
-                                <option key={type.id ?? type} value={type.id ?? type}>
-                                    {type.value ?? type}
-                                </option>
-                            ))}
-                        </select>
-                        {fieldErrors.shoptype && (
-                            <p className="mt-1 text-xs text-red-600">{fieldErrors.shoptype}</p>
-                        )}
-                    </div>
+                    <FormField
+                        label='Type de magasin'
+                        value={form.shoptype}
+                        onChange={handleChange('shoptype')}
+                        errorname={fieldErrors.shoptype}
+                        inputClass={inputClass('shoptype')}
+                        inputType="select"
+                        data={types}
+                    />
 
                     {formError && (
                         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">

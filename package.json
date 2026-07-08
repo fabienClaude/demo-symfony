@@ -11,6 +11,7 @@
         "autoprefixer": "^10.5.2",
         "babel-plugin-polyfill-corejs3": "^1.0.0",
         "core-js": "^3.49.0",
+        "cross-env": "^10.1.0",
         "postcss": "^8.5.16",
         "postcss-loader": "^8.2.1",
         "regenerator-runtime": "^0.13.9",
@@ -24,7 +25,7 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "cross-env NODE_ENV=production encore production --progress"
     },
     "dependencies": {
         "@babel/standalone": "^8.0.3",

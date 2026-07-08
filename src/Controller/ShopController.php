@@ -16,6 +16,7 @@ use App\Form\Type\ShopFormType;
 
 final class ShopController extends AbstractController
 {
+    //Page principale de l'application
     #[Route('/', name: 'app_shop')]
     public function index(TranslatorInterface $translator,ShopRepository $shoprepository): Response
     {
@@ -37,6 +38,7 @@ final class ShopController extends AbstractController
         ]);
     }
 
+    //Ajout de magasin
     #[Route('/add', name: 'app_shop_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $em): JsonResponse
     {

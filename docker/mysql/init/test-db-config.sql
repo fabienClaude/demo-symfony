@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON `test_%`.* TO 'symfony'@'%';
+FLUSH PRIVILEGES;

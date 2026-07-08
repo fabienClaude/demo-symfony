@@ -1,0 +1,1 @@
+{"version":2,"defects":{"App\\Tests\\ShopTest::testCreateShop":7,"App\\Tests\\ShopTest::testUpdateShop":8},"times":{"App\\Tests\\ShopTest::testCreateShop":0.694,"App\\Tests\\ShopTest::testUpdateShop":0.021}}
