@@ -22,9 +22,7 @@ class ShopRepository extends ServiceEntityRepository
             ->orderBy('s.id', 'ASC')
             ->getQuery()
             ->getResult();
-
     }
-
 
     //    /**
     //     * @return Shop[] Returns an array of Shop objects

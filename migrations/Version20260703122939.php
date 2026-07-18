@@ -42,22 +42,6 @@ final class Version20260703122939 extends AbstractMigration
               PRIMARY KEY (id)
             ) DEFAULT CHARACTER SET utf8mb4
         SQL);
-        $this->addSql(<<<'SQL'
-            CREATE TABLE messenger_messages (
-              id BIGINT AUTO_INCREMENT NOT NULL,
-              body LONGTEXT NOT NULL,
-              headers LONGTEXT NOT NULL,
-              queue_name VARCHAR(190) NOT NULL,
-              created_at DATETIME NOT NULL,
-              available_at DATETIME NOT NULL,
-              delivered_at DATETIME DEFAULT NULL,
-              INDEX IDX_75EA56E0FB7336F0E3BD61CE16BA31DBBF396750 (
-                queue_name, available_at, delivered_at,
-                id
-              ),
-              PRIMARY KEY (id)
-            ) DEFAULT CHARACTER SET utf8mb4
-        SQL);
     }
 
     public function down(Schema $schema): void
@@ -65,6 +49,5 @@ final class Version20260703122939 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE shop');
         $this->addSql('DROP TABLE user');
-        $this->addSql('DROP TABLE messenger_messages');
     }
 }

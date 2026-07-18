@@ -29,7 +29,7 @@ Créer les tables de la base de données
 ```bash
 php bin/console doctrine:migrations:migrate
 ```
-Compiler le frontend de l'applicaiton
+Compiler le frontend de l'application
 ```bash
 npm run build
 ```

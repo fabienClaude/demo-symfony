@@ -114,13 +114,13 @@ class Shop
 
     public function toArray(): array
     {
-        return  [
+        return [
             'id' => $this->getId(),
-            'name' => $this->getName(), 
-            'owner' => $this->getOwner(), 
-            'address' => $this->getAddress(), 
-            'city' => $this->getCity(), 
-            'zipcode' => $this->getZipCode(), 
+            'name' => $this->getName(),
+            'owner' => $this->getOwner(),
+            'address' => $this->getAddress(),
+            'city' => $this->getCity(),
+            'zipcode' => $this->getZipCode(),
             'shoptype' => $this->getShopType(),
         ];
     }
