@@ -2,44 +2,46 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\ImportFileStructure;
+use App\Entity\Enum\ShopType;
+use App\Form\Type\ImportFormType;
+use App\Message\ProcessImportMessage;
+use App\Service\ImportService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use App\Repository\ShopImportRepository;
-use App\Entity\Enum\ShopType;
-use App\Entity\Enum\ImportFileStructure;
-use App\Form\Type\ImportFormType;
-use Symfony\Component\Messenger\MessageBusInterface;
-use App\Message\ProcessImportMessage;
 
 final class ImportController extends AbstractController
 {
-
     // Importer le fichier
     #[Route('/import', name: 'app_import')]
-    public function import(Request $request, ShopImportRepository $importrepository, MessageBusInterface $bus): JsonResponse
+    public function import(Request $request, ImportService $importService, MessageBusInterface $bus): JsonResponse
     {
         $form = $this->createForm(ImportFormType::class);
         $form->handleRequest($request);
+
         if (!$form->isSubmitted() || !$form->isValid()) {
             return new JsonResponse([
                 'message' => 'Fichier invalide ou manquant.',
             ], Response::HTTP_BAD_REQUEST);
         }
-        if (!$form->isValid()) {
-            dump((string) $form->getErrors(true, false));
-        }
+
         $file = $form->get('file')->getData();
-        $fileimport = $importrepository->add($file);
+        $fileimport = $importService->importFile($file);
+        // $importService->processFile($fileimport->getId());
+
         $bus->dispatch(new ProcessImportMessage($fileimport->getId()));
+
         return new JsonResponse([
             'message' => 'Import ajouté',
         ]);
-}
+    }
+
     // Modèle d'import
     #[Route('/import-template', name: 'app_import_template')]
     public function template(): Response

@@ -21,6 +21,10 @@ class ShopTest extends KernelTestCase
             ->get('doctrine')
             ->getManager();
         $this->shopRepository = $this->entityManager->getRepository(Shop::class);
+        // S'assurer qu'on commence avec 0 magasin
+        foreach ($this->shopRepository->findAll() as $shop) {
+            $this->entityManager->remove($shop);
+        }
     }
 
     public function testCreateShop(): void

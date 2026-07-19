@@ -1,1 +1,1 @@
-{"version":2,"defects":{"App\\Tests\\ShopTest::testCreateShop":7,"App\\Tests\\ShopTest::testUpdateShop":8},"times":{"App\\Tests\\ShopTest::testCreateShop":0.694,"App\\Tests\\ShopTest::testUpdateShop":0.021}}
+{"version":2,"defects":{"App\\Tests\\ShopTest::testCreateShop":8,"App\\Tests\\ShopTest::testUpdateShop":8,"App\\Tests\\ImportTest::testImportFullSuccess":7},"times":{"App\\Tests\\ShopTest::testCreateShop":0.068,"App\\Tests\\ShopTest::testUpdateShop":0.022,"App\\Tests\\ImportTest::testImportFullSuccess":0.685,"App\\Tests\\ImportTest::testImportWithErrors":0.155}}

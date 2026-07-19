@@ -118,7 +118,7 @@ class ShopImport
         return $this;
     }
 
-    public function getStoredFilename() : string
+    public function getStoredFilename(): string
     {
         return $this->uuid.'_'.$this->getFilename();
     }
